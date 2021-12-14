@@ -4,7 +4,8 @@ mod camera;
 mod map;
 
 use camera::*;
-use map::{MapPlugin, Map};
+use map::MapPlugin;
+
 
 fn main() {
     let mut app = App::build();

@@ -1,19 +1,17 @@
 use bevy::{prelude::*, render::camera::Camera};
 
-use crate::map::{MapPlugin, Map};
-
 #[derive(Default)]
 pub struct MouseDownPos {
-    pub mouse_pos_start: Vec2,
-    pub map_pos_start: Vec3,
+    pub mouse_start_pos: Vec2,
+    pub camera_start_pos: Vec2,
     pub saved: bool,
 }
 
 impl MouseDownPos {
     pub fn new() -> Self {
         MouseDownPos {
-            mouse_pos_start: Vec2::ZERO,
-            map_pos_start: Vec3::ZERO,
+            mouse_start_pos: Vec2::ZERO,
+            camera_start_pos: Vec2::ZERO,
             saved: false,
         }
     }
@@ -33,8 +31,8 @@ pub(crate) fn camera_mouse_system(
                 .get_primary()
                 .and_then(|window| window.cursor_position())
             {
-                translation.x = start_pos.map_pos_start.x - (cursor_position.x - start_pos.mouse_pos_start.x);
-                translation.y = start_pos.map_pos_start.y - (cursor_position.y - start_pos.mouse_pos_start.y);
+                translation.x = start_pos.camera_start_pos.x - (cursor_position.x - start_pos.mouse_start_pos.x);
+                translation.y = start_pos.camera_start_pos.y - (cursor_position.y - start_pos.mouse_start_pos.y);
             };
         }
     }
@@ -44,7 +42,7 @@ pub(crate) fn save_start_pos(
     mut start_pos: ResMut<MouseDownPos>,
     mouse_button: Res<Input<MouseButton>>, 
     windows: Res<Windows>,
-    q: Query<(&Transform, &Map)>) 
+    q: Query<(&Camera, &Transform)>) 
 {
     if mouse_button.just_released(MouseButton::Right) {
         start_pos.saved = false;
@@ -57,8 +55,10 @@ pub(crate) fn save_start_pos(
                 .get_primary()
                 .and_then(|window| window.cursor_position())
             {
-                start_pos.mouse_pos_start = cursor_position;
-                start_pos.map_pos_start = q.single().unwrap().0.translation;
+                if let Ok((_, transform)) = q.single() {
+                    start_pos.mouse_start_pos = cursor_position;
+                    start_pos.camera_start_pos = transform.translation.into();
+                }
             };
         }
     } 

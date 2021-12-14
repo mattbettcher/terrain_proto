@@ -1,4 +1,4 @@
-use bevy::{prelude::*, render::camera::Camera};
+use bevy::prelude::*;
 
 #[derive(Default)]
 pub struct MapPlugin {}
