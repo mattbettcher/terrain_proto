@@ -14,7 +14,7 @@ fn main() {
     app.add_plugins(DefaultPlugins);
     #[cfg(target_arch = "wasm32")]
     app.add_plugin(bevy_webgl2::WebGL2Plugin);
-    app.add_plugin(MapPlugin {});
+    app.add_plugin(MapPlugin::new());
     app.add_system(save_start_pos.system());
     app.add_system(camera_mouse_system.system());
     app.add_startup_system(setup.system()).run();
