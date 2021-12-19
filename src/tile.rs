@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use std::collections::{hash_map::RandomState, HashMap};
 use rand::prelude::*;
 
+use crate::map;
+
 #[derive(Default, PartialEq, PartialOrd)]
 pub struct Point {
     pub x: i32,
@@ -36,26 +38,31 @@ pub fn setup_map_system(mut commands: Commands, asset_server: Res<AssetServer>, 
     commands.entity(map_id).insert(Transform::default());
     commands.entity(map_id).insert(GlobalTransform::default());
 
-    let chunk_id = spawn_chunk(&mut commands, map_id);
-    commands.entity(map_id).push_children(&[chunk_id]);
+    let _chunk_id = spawn_chunk(&mut commands, map_id, &texture_atlas_handle, Vec2::new(0.0, 0.0));
+    let _chunk2_id = spawn_chunk(&mut commands, map_id, &texture_atlas_handle, Vec2::new(-4.0, 0.0));
+    let _chunk2_id = spawn_chunk(&mut commands, map_id, &texture_atlas_handle, Vec2::new(-8.0, 4.0));
+    let _chunk2_id = spawn_chunk(&mut commands, map_id, &texture_atlas_handle, Vec2::new(-12.0, 8.0));
 
-    let mut tiles = vec![];
-
-    let mut rng = rand::thread_rng();
-
-    for y in (-20..20).rev() {
-        for x in (-20..20).rev() {
-            tiles.push(spawn_tile(&mut commands, chunk_id, &texture_atlas_handle, Vec3::new(x as f32, y as f32, rng.gen_range(0.0..5.0))));
-        }
-    }
-
-    commands.entity(chunk_id).push_children(&tiles);
 }
 
-fn spawn_chunk(commands: &mut Commands, map_id: Entity) -> Entity {
+fn spawn_chunk(commands: &mut Commands, map_id: Entity, texture_atlas_handle: &Handle<TextureAtlas>, offset: Vec2) -> Entity {
     let chunk_id = commands.spawn().id();
     commands.entity(chunk_id).insert(Transform::default());
     commands.entity(chunk_id).insert(GlobalTransform::default());
+
+    let mut rng = rand::thread_rng();
+
+    let mut tiles = vec![];
+
+    for y in (-2..2).rev() {
+        for x in (-2..2).rev() {
+            tiles.push(spawn_tile(commands, chunk_id, &texture_atlas_handle, 
+                Vec3::new(x as f32 + offset.x, y as f32 + offset.y, rng.gen_range(0.0..5.0))));
+        }
+    }
+    //commands.entity(chunk_id).push_children(&tiles);
+    commands.entity(map_id).push_children(&[chunk_id]);
+
     chunk_id
 }
 
@@ -71,7 +78,7 @@ fn spawn_tile(commands: &mut Commands, chunk_id: Entity, texture_atlas_handle: &
         transform: Transform::from_translation(iso_coords(pos.x as i32, pos.y as i32, pos.z)),
         ..Default::default()
     });
-    //commands.entity(chunk_id).push_children(&[tile]);
+    commands.entity(chunk_id).push_children(&[tile]);
     tile
 }
 
