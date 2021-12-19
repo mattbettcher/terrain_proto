@@ -1,11 +1,10 @@
-use bevy::{prelude::*};
-
+use bevy::prelude::*;
 use std::collections::{hash_map::RandomState, HashMap};
 
 #[derive(Default, PartialEq, PartialOrd)]
 pub struct Point {
     pub x: i32,
-    pub y: i32
+    pub y: i32,
 }
 
 impl Point {
@@ -26,7 +25,13 @@ pub struct MapPlugin {
 impl MapPlugin {
     pub fn new() -> Self {
         let s = RandomState::new();
-        MapPlugin { chunk_size: 3, tile_columns: 2, tile_rows: 2, tile_size: Vec2::new(54.0, 24.0), chunks: HashMap::with_capacity_and_hasher(20, s) }
+        MapPlugin {
+            chunk_size: 3,
+            tile_columns: 2,
+            tile_rows: 2,
+            tile_size: Vec2::new(54.0, 24.0),
+            chunks: HashMap::with_capacity_and_hasher(20, s),
+        }
     }
 }
 
@@ -46,17 +51,22 @@ impl MapPlugin {
         let texture_handle = asset_server.load("iso_tile_atlas.png");
         let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(64.0, 64.0), 2, 2);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
-        let map = Chunk::new(texture_atlas_handle.clone(), 3, Vec2::new(50.0, 24.0), Point::new(1, 1));
+
+        let map = Chunk::new(
+            texture_atlas_handle.clone(),
+            3,
+            Vec2::new(50.0, 24.0),
+            Point::new(1, 1),
+        );
         map.spawn_tiles(&mut commands);
-        commands.spawn().insert(Transform::default()).insert(map);
 
-        let map2 = Chunk::new(texture_atlas_handle.clone(), 3, Vec2::new(50.0, 24.0), Point::new(-1, -1));
+        let map2 = Chunk::new(
+            texture_atlas_handle.clone(),
+            3,
+            Vec2::new(50.0, 24.0),
+            Point::new(-1, -1),
+        );
         map2.spawn_tiles(&mut commands);
-        commands.spawn().insert(Transform::default()).insert(map2);
-    }
-
-    fn spawn_chunk() {
-
     }
 }
 
@@ -83,7 +93,7 @@ impl Chunk {
             tile_rows,
             tile_size,
             location,
-            size
+            size,
         }
     }
 
@@ -108,11 +118,11 @@ impl Chunk {
 
     fn iso_coords(&self, tile_index: usize) -> Vec3 {
         let map_x = tile_index % self.tile_columns;
-        let map_y = tile_index / self.tile_columns;
+        let map_y = tile_index / self.tile_rows;
         let draw_order = map_x + map_y;
 
         let cart_x = map_x as f32 - (self.tile_columns as f32 / 2.0);
-        let cart_y = (self.tile_columns as f32 / 2.0) - map_y as f32;
+        let cart_y = (self.tile_rows as f32 / 2.0) - map_y as f32;
 
         let iso_x = (cart_x + cart_y) / -2.0;
         let iso_y = (cart_x - cart_y) / -2.0;
@@ -120,7 +130,10 @@ impl Chunk {
         let chunk_offset_x = (self.location.x * self.size as i32) as f32 * self.tile_size.x;
         let chunk_offset_y = (self.location.y * self.size as i32) as f32 * self.tile_size.y;
 
-        Vec3::new(iso_x * self.tile_size.x + chunk_offset_x, iso_y * self.tile_size.y + chunk_offset_y, draw_order as f32)
+        Vec3::new(
+            iso_x * self.tile_size.x + chunk_offset_x,
+            iso_y * self.tile_size.y + chunk_offset_y,
+            draw_order as f32,
+        )
     }
 }
-
