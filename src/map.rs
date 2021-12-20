@@ -13,6 +13,7 @@ impl Point {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Default)]
 pub struct MapPlugin {
     chunk_size: usize,
@@ -23,6 +24,8 @@ pub struct MapPlugin {
 }
 
 impl MapPlugin {
+    
+    #[allow(dead_code)]
     pub fn new() -> Self {
         let s = RandomState::new();
         MapPlugin {

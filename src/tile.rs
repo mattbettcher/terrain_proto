@@ -1,8 +1,5 @@
 use bevy::prelude::*;
-use std::collections::{hash_map::RandomState, HashMap};
 use rand::prelude::*;
-
-use crate::map;
 
 #[derive(Default, PartialEq, PartialOrd)]
 pub struct Point {
@@ -11,6 +8,7 @@ pub struct Point {
 }
 
 impl Point {
+    #[allow(dead_code)]
     pub fn new(x: i32, y: i32) -> Self {
         Point { x, y }
     }
@@ -19,6 +17,8 @@ impl Point {
 #[derive(Default)]
 pub struct Tile {}
 
+
+#[allow(dead_code)]
 #[derive(Default)]
 pub struct Chunk {
     location: Point,
@@ -45,7 +45,7 @@ pub fn setup_map_system(mut commands: Commands, asset_server: Res<AssetServer>, 
 
 }
 
-fn spawn_chunk(commands: &mut Commands, map_id: Entity, texture_atlas_handle: &Handle<TextureAtlas>, offset: Vec2) -> Entity {
+pub fn spawn_chunk(commands: &mut Commands, map_id: Entity, texture_atlas_handle: &Handle<TextureAtlas>, offset: Vec2) -> Entity {
     let chunk_id = commands.spawn().id();
     commands.entity(chunk_id).insert(Transform::default());
     commands.entity(chunk_id).insert(GlobalTransform::default());

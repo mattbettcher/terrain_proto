@@ -1,13 +1,14 @@
-use bevy::{prelude::*, diagnostic::{LogDiagnosticsPlugin, FrameTimeDiagnosticsPlugin}};
+use bevy::{prelude::*};//, diagnostic::{LogDiagnosticsPlugin, FrameTimeDiagnosticsPlugin}};
 use bevy_inspector_egui::WorldInspectorPlugin;
 
 mod camera;
 mod map;
 mod tile;
+mod click;
 
 use camera::*;
-use map::MapPlugin;
 use tile::*;
+use click::*;
 
 fn main() {
     let mut app = App::build();
@@ -19,6 +20,7 @@ fn main() {
     //app.add_plugin(MapPlugin::new());
     app.add_system(save_start_pos.system());
     app.add_system(camera_mouse_system.system());
+    app.add_system(click_system.system());
     //app.add_plugin(LogDiagnosticsPlugin::default());
     //app.add_plugin(FrameTimeDiagnosticsPlugin::default());
     
